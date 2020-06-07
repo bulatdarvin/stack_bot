@@ -42,6 +42,12 @@ def load_embeddings(embeddings_path):
       embeddings_dim - dimension of the vectors.
     """
 
+    embeddings = dict()
+    with open(embeddings_path) as f:
+        for line in f.readlines():
+            row = line.strip().split('\t')
+            embeddings[row[0]] = np.array(row[1:], dtype=np.float32)
+    return embeddings , embeddings[row[0]].shape[0]
     # Hint: you have already implemented a similar routine in the 3rd assignment.
     # Note that here you also need to know the dimension of the loaded embeddings.
     # When you load the embeddings, use numpy.float32 type as dtype
@@ -50,27 +56,28 @@ def load_embeddings(embeddings_path):
     #### YOUR CODE HERE ####
     ########################
 
-    # remove this when you're done
-    raise NotImplementedError(
-        "Open utils.py and fill with your code. In case of Google Colab, download"
-        "(https://github.com/hse-aml/natural-language-processing/blob/master/project/utils.py), "
-        "edit locally and upload using '> arrow on the left edge' -> Files -> UPLOAD")
 
 
 def question_to_vec(question, embeddings, dim):
     """Transforms a string to an embedding by averaging word embeddings."""
-
-    # Hint: you have already implemented exactly this function in the 3rd assignment.
-
-    ########################
-    #### YOUR CODE HERE ####
-    ########################
-
-    # remove this when you're done
-    raise NotImplementedError(
-        "Open utils.py and fill with your code. In case of Google Colab, download"
-        "(https://github.com/hse-aml/natural-language-processing/blob/master/project/utils.py), "
-        "edit locally and upload using '> arrow on the left edge' -> Files -> UPLOAD")
+    word_tokens = question.split(" ")
+    question_len = len(word_tokens)
+    question_mat = np.zeros((question_len,dim), dtype = np.float32)
+    
+    for idx, word in enumerate(word_tokens):
+        if word in embeddings:
+            question_mat[idx,:] = embeddings[word]
+            
+    # remove zero-rows which stand for OOV words       
+    question_mat = question_mat[~np.all(question_mat == 0, axis = 1)]
+    
+    # Compute the mean of each word along the sentence
+    if question_mat.shape[0] > 0:
+        vec = np.array(np.mean(question_mat, axis = 0), dtype = np.float32).reshape((1,dim))
+    else:
+        vec = np.zeros((1,dim), dtype = np.float32)
+        
+    return vec
 
 
 def unpickle_file(filename):

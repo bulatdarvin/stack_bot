@@ -6,8 +6,9 @@ import argparse
 import os
 import json
 
+from dialogue_manager import DialogueManager
 from requests.compat import urljoin
-
+TELEGRAM_TOKEN = "1227646271:AAGi5oujCC4GC728QnIwMQdsC2kTAuC1Pqw"
 
 class BotHandler(object):
     """
@@ -67,9 +68,10 @@ class SimpleDialogueManager(object):
         
 
 def main():
-    args = parse_args()
-    token = args.token
-
+    #args = parse_args()
+    #token = args.token
+    #print(os.environ)
+    token = "1227646271:AAGi5oujCC4GC728QnIwMQdsC2kTAuC1Pqw"
     if not token:
         if not "TELEGRAM_TOKEN" in os.environ:
             print("Please, set bot token through --token or TELEGRAM_TOKEN env variable")
@@ -84,9 +86,10 @@ def main():
     # This is the point where you plug it into the Telegram bot. 
     # Do not forget to import all needed dependencies when you do so.
     
-    simple_manager = SimpleDialogueManager()
-    bot = BotHandler(token, simple_manager)
-    
+    #simple_manager = SimpleDialogueManager()
+    #bot = BotHandler(token, simple_manager)
+    manager = DialogueManager(os.path)
+    bot = BotHandler(token, manager)
     ###############################################################
 
     print("Ready to talk!")
